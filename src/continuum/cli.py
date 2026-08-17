@@ -112,6 +112,17 @@ def _prompt_choice(label: str, options: tuple[str, ...], default: str) -> str:
 
 def cmd_demo(args: argparse.Namespace) -> int:
     db = str(Path(args.db).expanduser().resolve())
+    # The demo must start from a truly empty store: a stale db from a
+    # previous run would make Session 1 "remember" things it shouldn't.
+    # WAL mode leaves -wal/-shm sidecars, so all three must go.
+    removed = False
+    for suffix in ("", "-wal", "-shm"):
+        sidecar = Path(db + suffix)
+        if sidecar.exists():
+            sidecar.unlink()
+            removed = True
+    if removed:
+        print(f"removed stale store {db} — demo always starts fresh")
     demo_dir = Path(__file__).resolve().parent.parent.parent / "demo"
     print(f"memory db : {db} (fresh store)")
     print("=" * 72)

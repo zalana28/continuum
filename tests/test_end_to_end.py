@@ -73,3 +73,34 @@ def test_cli_demo_runs_end_to_end(tmp_path):
     assert "auto_suppress" in out          # session 2, from the subprocess
     assert "inc_2026_0001" in out          # the citation survived the kill
     assert "does not inherit that clearance" in out
+
+
+def test_cli_demo_wipes_stale_store(tmp_path, session1_alert):
+    """A leftover db from a previous run must not leak into Session 1."""
+    repo = Path(__file__).resolve().parent.parent
+    db = tmp_path / "demo.db"
+
+    # Pre-seed the db with a resolved incident — the exact footgun.
+    from continuum.feedback.resolve import resolve_alert
+
+    resolve_alert(
+        ContinuumMemory(db), session1_alert,
+        resolution="false_positive",
+        root_cause="old run",
+        severity_assigned="low",
+        incident_id="inc_2026_0001",
+    )
+
+    proc = subprocess.run(
+        [sys.executable, "-m", "continuum.cli", "demo", "--db", str(db)],
+        capture_output=True,
+        text=True,
+        timeout=300,
+        cwd=repo,
+    )
+    assert proc.returncode == 0, proc.stderr
+    out = proc.stdout
+    assert "removed stale store" in out
+    # Session 1 must be a blind escalate, not a "remembered" suppression.
+    assert "decision  : escalate  (confidence 0.50)" in out
+    assert "No prior context" in out

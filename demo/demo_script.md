@@ -15,9 +15,12 @@ terminal, or keep the terminal prompt with its timestamp on screen).
 cd continuum
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
-rm -f demo/demo_memory.db          # start from a truly empty store
 date                              # on-screen timestamp for the recall beat
 ```
+
+`continuum demo` wipes its own store first, so the demo always starts
+from a truly empty memory (a stale db would make Session 1 "remember"
+things it shouldn't).
 
 ## 1. Session 1 — first encounter, memory is empty (00:00–01:00)
 

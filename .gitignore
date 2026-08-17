@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Virtualenvs
+.venv/
+
+# Test / tooling caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local memory databases (Sibyl Memory is a local file)
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# macOS
+.DS_Store
+
+# Demo-local state
+demo/*.db

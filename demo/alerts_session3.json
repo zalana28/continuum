@@ -1,0 +1,12 @@
+{
+  "alert_id": "alt_session3",
+  "timestamp": "2026-09-06T11:45:00Z",
+  "alert_type": "anomalous_login",
+  "entities": {
+    "user": "mchen",
+    "host": "corp-laptop-07",
+    "source_ip": "198.51.100.23"
+  },
+  "mitre_technique": "T1078",
+  "severity": "high"
+}
